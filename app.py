@@ -185,16 +185,16 @@ class App(QWidget):
         open_file_dest.setCursor(QCursor(Qt.PointingHandCursor))
         open_file_dest.clicked.connect(lambda: self.get_file_path("destDir", self.dir_dest))
 
-        save_as_lbl = QLabel(self.dir_frame)
-        save_as_lbl.setText("Suffix image name as:")
-        save_as_lbl.setObjectName("save_as_lbl")
-        save_as_lbl.setFont(QFont("Poppins", 12))
-        save_as_lbl.move(10, 180)
+        suffix_as_lbl = QLabel(self.dir_frame)
+        suffix_as_lbl.setText("Suffix image name as:")
+        suffix_as_lbl.setObjectName("save_as_lbl")
+        suffix_as_lbl.setFont(QFont("Poppins", 12))
+        suffix_as_lbl.move(10, 180)
 
-        self.save_as = QLineEdit(self.dir_frame)
-        self.save_as.setObjectName("save_as")
-        self.save_as.setFont(QFont("Poppins", 12))
-        self.save_as.move(10, 210)
+        self.suffix_as = QLineEdit(self.dir_frame)
+        self.suffix_as.setObjectName("save_as")
+        self.suffix_as.setFont(QFont("Poppins", 12))
+        self.suffix_as.move(10, 210)
 
         quality_lbl = QLabel(self.dir_frame)
         quality_lbl.setText("Select Image Quality:")
@@ -202,13 +202,13 @@ class App(QWidget):
         quality_lbl.setObjectName("quality_lbl")
         quality_lbl.move(10, 260)
 
-        self.quality = QComboBox(self.dir_frame)
-        self.quality.setFont(QFont("Poppins", 12))
-        self.quality.addItem("High")
-        self.quality.addItem("Medium")
-        self.quality.addItem("Low")
-        self.quality.setObjectName("quality")
-        self.quality.move(240, 260)
+        self.quality_dir = QComboBox(self.dir_frame)
+        self.quality_dir.setFont(QFont("Poppins", 12))
+        self.quality_dir.addItem("High")
+        self.quality_dir.addItem("Medium")
+        self.quality_dir.addItem("Low")
+        self.quality_dir.setObjectName("quality")
+        self.quality_dir.move(240, 260)
 
         compress = QPushButton(self.dir_frame)
         compress.setFont(QFont("Poppins", 12))
@@ -216,8 +216,8 @@ class App(QWidget):
         compress.setObjectName("compress")
         compress.move(25, 320)
         compress.setCursor(QCursor(Qt.PointingHandCursor))
-        # compress.clicked.connect(lambda: self.single_compress(self.img_src.text(), self.img_dest.text(),
-        #                                                       self.save_as.text(), self.quality.currentText()))
+        compress.clicked.connect(lambda: self.dir_compress(self.dir_src.text(), self.dir_dest.text(),
+                                                           self.suffix_as.text(), self.quality_dir.currentText()))
 
         self.dir_frame.setVisible(False)
 
@@ -287,41 +287,75 @@ class App(QWidget):
                 e.setText(file_name)
 
     # *FUNC DIR IMG(S) COMPRESS
+    def dir_compress(self, src, dest, suffix, quality):
+        import os
+        if src == "" or dest == "":
+            self.status.append("<p style='color:rgb(255,0,0)'>Please provide the necessary info!</p>")
+        else:
+            self.status.append(f"Fetching images from {src}")
+            temp = os.listdir(src)
+            files = []
+            for file in temp:
+                if file.endswith(".png") or file.endswith(".jpg") or file.endswith("jpeg"):
+                    img = file.split(".")
+                    files.append(img)
+            if len(files) == 0:
+                self.status.append("<p style='color:rgb(255,0,0)'>Unable to find any Image file in the given "
+                                   "directory!</p>")
+            for images in files:
+                r_src = src + "\\" + (".".join(images))
+                if suffix == '':
+                    r_dest = dest + "/" + images[0] + "_compressed." + images[1]
+                else:
+                    r_dest = dest + "/" + images[0] + suffix + "." + images[1]
+                try:
+                    print(r_src, quality, r_dest)
+                    self.compressing(r_src, quality, r_dest)
+                except Exception as err:
+                    self.status.append(f"<p style='color:rgb(255,0,0)'>Could not complete the task! {err}</p>")
+
+        # !CLEARING ALL the FIELDS
+        self.dir_src.setText("")
+        self.dir_dest.setText("")
+        self.suffix_as.setText("")
 
     # *FUNC SINGLE IMG COMPRESS
     def single_compress(self, src, dest, save, quality):
-        width = 0
         if src == "" or dest == "" or save == "":
             self.status.append("<p style='color:rgb(255,0,0)'>Please provide the necessary info!</p>")
         else:
             self.status.append(f"Fetching image from: <br>{src}")
             try:
-                img = Image.open(src)
                 extension = src.split(".")[1]
-                original_width = img.width
-                if quality == "High":
-                    width = original_width
-                    self.status.append("Processing High Quality Image...")
-                if quality == "Medium":
-                    width = int(original_width / 2)
-                    self.status.append("Processing Medium Quality Image...")
-                elif quality == "Low":
-                    width = int(original_width / 4)
-                    self.status.append("Processing Low Quality Image...")
-                self.status.append("File fetched successfully!")
-                w_percent = (width / float(img.size[0]))
-                h_percent = int(float(img.size[1]) * float(w_percent))
-                img = img.resize((width, h_percent), Image.ANTIALIAS)
-                img.save(dest + '/' + save + '.' + extension)
-                self.status.append(f"<p style='color:rgb(0,255,0)'>File compressed and saved at <br>{dest}</p>")
-
-            except FileNotFoundError as err:
+                dest += '/' + save + '.' + extension
+                self.compressing(src, quality, dest)
+            except Exception as err:
                 self.status.append(f"<p style='color:rgb(255,0,0)'>Could not complete the task! {err}</p>")
 
         # !CLEARING ALL the FIELDS
         self.img_src.setText("")
         self.img_dest.setText("")
         self.save_as.setText("")
+
+    def compressing(self, src, quality, dest):
+        width = 0
+        img = Image.open(src)
+        original_width = img.width
+        if quality == "High":
+            width = original_width
+            self.status.append("<p style='color: #FFF'>Processing High Quality Image...</p>")
+        if quality == "Medium":
+            width = int(original_width / 2)
+            self.status.append("<p style='color: #FFF'>Processing Medium Quality Image...</p>")
+        elif quality == "Low":
+            width = int(original_width / 4)
+            self.status.append("<p style='color: #FFF'>Processing Low Quality Image...</p>")
+        self.status.append(f"<p style='color:rgb(255,255,0)'>Compressing<br>{dest}</p>")
+        w_percent = (width / float(img.size[0]))
+        h_percent = int(float(img.size[1]) * float(w_percent))
+        img = img.resize((width, h_percent), Image.ANTIALIAS)
+        img.save(dest)
+        self.status.append(f"<p style='color:rgb(0,255,0)'>File compressed and saved as<br>{dest}</p>")
 
 
 def show_attr():
