@@ -1,0 +1,107 @@
+#main_window {
+    background-color: #121212;
+}
+
+#alert_frame{
+    background-color: rgba(135, 5, 5, 0.7);
+    min-width: 460px;
+    max-width: 460px;
+    min-height: 40px;
+    max-height: 40px;
+    border-radius: 15px;
+}
+#alert_info{
+    color: #FFFFFF;
+}
+
+#radio_frame{
+    background-color: #323131;
+    min-width: 460px;
+    max-width: 460px;
+    min-height: 40px;
+    max-height: 40px;
+    border-radius: 15px;
+}
+#single_file_frame, #dir_frame{
+    background-color: #323131;
+    min-width: 460px;
+    max-width: 460px;
+    min-height: 400px;
+    max-height: 400px;
+    border-radius: 15px;
+
+}
+#single_file, #multi_file,#img_src_lbl, #img_dest_lbl, #save_as_lbl {
+    color: #FFFFFF;
+}
+#img_src, #img_dest, #save_as{
+    background-color: #323131;
+    color: #FFFFFF;
+    padding-bottom: 5px;
+    border: none;
+    outline: none;
+    border-bottom: 1px solid #FFFFFF;
+    min-width: 400px;
+    max-width: 400px;
+}
+#open_file{
+    background-color: #323131;
+    border: none;
+    outline: none;
+}
+#quality_lbl{
+    color: #FFFFFF;
+}
+#quality{
+    min-width: 190px;
+    max-width: 190px;
+
+}
+
+#compress{
+    min-width: 400px;
+    max-width: 400px;
+    min-height: 40px;
+    max-height: 40px;
+    background-color: #323131;
+    color: #FFFFFF;
+    border: 1px solid #121212;
+    border-radius: 15px;
+}
+#compress:hover{
+    background-color: #121212;
+}
+#status_frame{
+    background-color: #323131;
+    min-width: 460px;
+    max-width: 460px;
+    min-height: 290px;
+    max-height: 290px;
+    border-radius: 15px;
+}
+
+#status{
+    background-color: #323131;
+    border-radius: 15px;
+    padding: 10px;
+    color: #FFFFFF;
+    max-width: 420px;
+    min-width: 420px;
+    min-height: 250px;
+    max-height: 250px;
+}
+
+#attr_frame{
+    min-width: 460px;
+    max-width: 460px;
+    min-height: 20px;
+    max-height: 20px;
+    border-radius: 15px;
+}
+#attr{
+    background-color: #121212;
+    color: #FFFFFF;
+    font-family: "Merienda", sans-serif;
+    outline: none;
+    border: none;
+}
